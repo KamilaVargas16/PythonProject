@@ -1,35 +1,33 @@
-"""
-Crea un programa que pida un número y, usando un operador ternario, asigne a una variable el texto
-"Par" o "Impar". Luego, imprime el resultado. Adicionalmente, si el número es múltiplo de 5,
-debe imprimir un mensaje extra.
-Conceptos aplicados: Operador ternario, operador módulo (%), if.
+def clasificar_numero(numero: int) -> tuple[str, bool]:
+    """
+    Clasifica un número como par o impar y determina si es múltiplo de 5.
 
-"""
+    Args:
+        numero (int): número a evaluar.
+
+    Returns:
+        tuple[str, bool]: ("Par"/"Impar", True si es múltiplo de 5, False en caso contrario)
+    """
+    tipo = "Par" if numero % 2 == 0 else "Impar"
+    es_multiplo5 = (numero % 5 == 0)
+    return tipo, es_multiplo5
 
 
 def main():
     """
     Programa que clasifica un número como par o impar
     y muestra un mensaje adicional si es múltiplo de 5.
-
-    Args:
-        None
-
-    Returns:
-        None
     """
     try:
         numero = int(input("Ingrese un número: "))
 
-        # Usando operador ternario
-        tipo = "Par" if numero % 2 == 0 else "Impar"
+        tipo, es_multiplo5 = clasificar_numero(numero)
         print(f"El número {numero} es {tipo}.")
 
-        # Mensaje extra si es múltiplo de 5
-        if numero % 5 == 0:
+        if es_multiplo5:
             print("Además, es múltiplo de 5.")
     except ValueError:
-        print(" Debe ingresar un número válido.")
+        print("Debe ingresar un número válido.")
 
 
 if __name__ == "__main__":

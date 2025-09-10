@@ -1,45 +1,43 @@
 """
 Ejercicio 3: Validador de Contraseñas
-Escribe un programa que pida al usuario crear una contraseña y la valide usando un bucle while. El bucle solo terminará cuando la contraseña cumpla todos los criterios:
-•	Mínimo 8 caracteres de longitud.
-•	Contiene al menos una letra mayúscula.
-•	Contiene al menos un número.
-•	En cada intento fallido, el programa debe indicar qué regla no se cumplió.
-Conceptos aplicados: Bucle while True, if/elif/else, len(), métodos de string (isupper(), islower(), isdigit()), break.
-
 """
+
+def validar_contraseña(contraseña: str) -> str:
+    """
+    Valida una contraseña según las reglas del sistema.
+
+    Args:
+        contraseña (str): La contraseña a validar.
+
+    Returns:
+        str: Mensaje indicando si es válida o qué regla falla.
+    """
+    if len(contraseña) < 8:
+        return "La contraseña debe tener al menos 8 caracteres."
+
+    if not any(c.isupper() for c in contraseña):
+        return "La contraseña debe contener al menos una letra mayúscula."
+
+    if not any(c.isdigit() for c in contraseña):
+        return "La contraseña debe contener al menos un número."
+
+    return "Contraseña válida. Registro exitoso."
 
 
 def main():
     """
     Función principal que ejecuta el validador de contraseñas.
-
-    Args:
-        None
-    Returns:
-        None
     """
     print("-" * 40)
-    print(" Validador de Contraseñas")
+    print("Validador de Contraseñas")
     print("-" * 40)
 
     while True:
         contraseña = input("\nCree una contraseña: ").strip()
-
-        if len(contraseña) < 8:
-            print(" La contraseña debe tener al menos 8 caracteres.")
-            continue
-
-        if not any(c.isupper() for c in contraseña):
-            print(" La contraseña debe contener al menos una letra mayúscula.")
-            continue
-
-        if not any(c.isdigit() for c in contraseña):
-            print(" La contraseña debe contener al menos un número.")
-            continue
-
-        print(" Contraseña válida. Registro exitoso.")
-        break
+        mensaje = validar_contraseña(contraseña)
+        print(mensaje)
+        if mensaje == "Contraseña válida. Registro exitoso.":
+            break
 
 
 if __name__ == "__main__":

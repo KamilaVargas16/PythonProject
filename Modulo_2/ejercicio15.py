@@ -1,14 +1,3 @@
-"""
-Ejercicio 15: Proyecto Final - Batalla Naval Simplificada
-Crea una versión del juego "Batalla Naval" en una cuadrícula de 5x5:
-•	El programa debe "esconder" un barco de 3 casillas en una fila o columna aleatoria.
-•	El jugador tiene 10 turnos para adivinar las coordenadas (ej. "A3") y hundir el barco.
-•	El programa debe gestionar el tablero (una lista de listas), validar la entrada del usuario, indicar si un disparo fue "Agua" o "Tocado", y llevar la cuenta de los turnos.
-
-•	Al final, debe declarar si el jugador ganó o perdió.
-Conceptos integrados: Lógica de juegos, listas anidadas, funciones, bucles while y for, condicionales, random, manipulación de strings.
-"""
-
 import random
 
 # Tamaño del tablero
@@ -21,14 +10,6 @@ def crear_tablero():
 
 
 def colocar_barco():
-    """
-    Esta función coloca un barco de 3 casillas horizontal o vertical.
-
-    Args:
-        None
-    Returns:
-        list: lista de coordenadas de los puntos de disparo
-    """
     """Coloca un barco de 3 casillas horizontal o vertical"""
     orientacion = random.choice(["H", "V"])
     if orientacion == "H":  # Horizontal
@@ -42,14 +23,6 @@ def colocar_barco():
 
 
 def imprimir_tablero(tablero):
-    """
-    Esta función muestra el tablero con coordenadas.
-
-    Args:
-        tablero (list): lista de listas que representa el tablero
-    Returns:
-        None
-    """
     """Muestra el tablero con coordenadas"""
     print("   " + " ".join(str(i + 1) for i in range(N)))
     for i, fila in enumerate(tablero):
@@ -57,14 +30,6 @@ def imprimir_tablero(tablero):
 
 
 def convertir_coordenada(coordenada):
-    """
-    Esta función convierte entrada tipo 'A3' en índices (fila, columna).
-
-    Args:
-        coordenada (str): entrada del usuario
-    Returns:
-        list: lista de dos índices (fila, columna)
-    """
     """Convierte entrada tipo 'A3' en índices (fila, columna)"""
     try:
         fila = ord(coordenada[0].upper()) - 65
@@ -77,14 +42,7 @@ def convertir_coordenada(coordenada):
 
 
 def jugar():
-    """
-    Este programa juega al juego de batalla naval.
-
-    Args:
-        None
-    Returns:
-        None
-    """
+    """Versión interactiva con input()"""
     tablero = crear_tablero()
     barco = colocar_barco()
     intentos = 10
@@ -119,12 +77,55 @@ def jugar():
         print(f"Turnos restantes: {intentos}")
         imprimir_tablero(tablero)
 
-    # Resultado final
     if aciertos == 3:
         print("\n ¡Felicidades! Hundiste el barco.")
     else:
         print("\n💀 Te quedaste sin turnos. El barco estaba en:")
         print([f"{chr(65 + f)}{c + 1}" for f, c in barco])
+
+
+# 🔹 Versión para pruebas unitarias
+def jugar_simulado(barco, disparos):
+    """
+    Simula una partida de Batalla Naval para pruebas unitarias.
+
+    Args:
+        barco (list[tuple]): lista de coordenadas del barco [(fila, col), ...]
+        disparos (list[str]): lista de coordenadas tipo "A3"
+
+    Returns:
+        tuple: (estado, tablero, turnos_restantes)
+            estado -> "ganaste" o "perdiste"
+            tablero -> lista final con X/O/~
+            turnos_restantes -> int
+    """
+    tablero = crear_tablero()
+    intentos = 10
+    aciertos = 0
+
+    for disparo in disparos:
+        pos = convertir_coordenada(disparo)
+        if not pos:
+            continue  # ignorar inválidos
+        fila, col = pos
+        if tablero[fila][col] != "~":
+            continue  # ya disparado
+
+        if pos in barco:
+            tablero[fila][col] = "X"
+            aciertos += 1
+        else:
+            tablero[fila][col] = "O"
+
+        intentos -= 1
+
+        if aciertos == 3:
+            return "ganaste", tablero, intentos
+
+        if intentos == 0:
+            break
+
+    return ("ganaste" if aciertos == 3 else "perdiste"), tablero, intentos
 
 
 def main():

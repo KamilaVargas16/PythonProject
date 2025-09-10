@@ -1,30 +1,35 @@
-"""
-Ejercicio 7: Combinador de Listas con zip
-Dadas dos listas, una con nombres de estudiantes y otra con sus respectivas notas finales,
-crea una función que las combine para generar un diccionario. Las claves serán los nombres
-y los valores las notas:
-•	Luego, itera sobre el diccionario resultante para imprimir un reporte del tipo:
-"El estudiante [Nombre] tiene una nota de [Nota]".
-Conceptos aplicados: Funciones, zip(), dict(), bucle for sobre diccionarios.
-
-"""
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 
 
-def pedir_entero(mensaje: str) -> int:
+def combinar_estudiantes_y_notas(estudiantes: list[str], notas: list[list[float]]) -> dict:
     """
-    Esta funcion sirve para validar si el numero es menor a 0 y si tiene otros caracteres diferentes a numeros
+    Combina estudiantes y sus listas de notas en un diccionario con promedios.
 
     Args:
-        mensaje (str): Mensaje que se muestra en el cuadro de dialogo
-    Returns:
-        int: Numero entero mayor a 0
+        estudiantes (list[str]): Lista de nombres de estudiantes.
+        notas (list[list[float]]): Lista de listas de notas para cada estudiante.
 
+    Returns:
+        dict: Diccionario con nombres como claves y promedios como valores.
     """
+    if len(estudiantes) != len(notas):
+        raise ValueError("La cantidad de estudiantes y de listas de notas no coincide.")
+
+    resultado = {}
+    for nombre, lista_notas in zip(estudiantes, notas):
+        if not lista_notas:  # evitar división por cero
+            raise ValueError(f"El estudiante {nombre} no tiene notas registradas.")
+        resultado[nombre] = sum(lista_notas) / len(lista_notas)
+
+    return resultado
+
+
+def pedir_entero(mensaje: str) -> int:
+    # Igual que antes
     while True:
         valor = simpledialog.askstring("Entrada", mensaje)
-        if valor and valor.strip().isdigit():  # Solo números sin espacios
+        if valor and valor.strip().isdigit():
             numero = int(valor.strip())
             if numero > 0:
                 return numero
@@ -35,17 +40,12 @@ def pedir_entero(mensaje: str) -> int:
 
 
 def pedir_float(mensaje: str) -> float:
-    """Esta funcion sirve para validar si el numero es menor a 0 y si tiene otros caracteres diferentes a numeros
-    Args:
-        mensaje (str): Mensaje que se muestra en el cuadro de dialogo
-    Returns:
-        float: Numero flotante mayor o igual a 0
-    """
+    # Igual que antes
     while True:
         valor = simpledialog.askstring("Entrada", mensaje)
         try:
             numero = float(valor.strip())
-            if numero >= 0:  # Acepta 0 pero no negativos
+            if numero >= 0:
                 return numero
             else:
                 messagebox.showwarning("Error", "No se permiten números negativos.")
@@ -54,46 +54,34 @@ def pedir_float(mensaje: str) -> float:
 
 
 def main():
-    """
-    Esta funcion sirve para pedir al usuario la cantidad de estudiantes y calcular el promedio de cada uno de ellos
-
-    Args:
-        None
-    Returns:
-    """
     root = tk.Tk()
-    root.withdraw()  # Oculta ventana principal
+    root.withdraw()
 
-    estudiantes = dict()
+    estudiantes = []
+    notas_estudiantes = []
 
-    # Pide cantidad de estudiantes
     cantidad = pedir_entero("Ingrese la cantidad de estudiantes:")
 
     for i in range(cantidad):
-        # Nombre
         while True:
             nombre = simpledialog.askstring("Entrada", f"Ingrese el nombre del estudiante {i + 1}:")
             if nombre and nombre.strip() and nombre.replace(" ", "").isalpha():
+                estudiantes.append(nombre)
                 break
             else:
                 messagebox.showwarning("Error", "El nombre no puede estar vacío y solo debe contener letras.")
 
-        # Pide cantidad de notas
         cantidad_notas = pedir_entero(f"Ingrese la cantidad de notas para {nombre}:")
-
-        # Pide notas
         notas = []
         for j in range(cantidad_notas):
             nota = pedir_float(f"Ingrese la nota {j + 1} de {nombre}:")
             notas.append(nota)
+        notas_estudiantes.append(notas)
 
-        # Calcula promedio
-        promedio_estudiante = sum(notas) / len(notas)
-        estudiantes[nombre] = promedio_estudiante
+    promedios = combinar_estudiantes_y_notas(estudiantes, notas_estudiantes)
 
-    # Mostrar resultados
     mensaje = "Promedios finales de los estudiantes:\n\n"
-    for est, prom in estudiantes.items():
+    for est, prom in promedios.items():
         mensaje += f"{est}: {prom:.2f}\n"
 
     messagebox.showinfo("Resultados", mensaje)
